@@ -1,0 +1,79 @@
+<wpml-config>
+    <admin-texts>
+        <key name="techly">
+            <key name="rt_phone" />
+            <key name="rt_email" />
+            <key name="rt_website" />
+            <key name="rt_contact_address" />
+            <key name="rt_get_login_label" />
+            <key name="rt_get_started_label" />
+            <key name="rt_contact_info_label" />
+            <key name="rt_follow_us_label" />
+            <key name="rt_about_label" />
+            <key name="rt_about_text" />
+            <key name="rt_footer_labels" />
+            <key name="rt_ready_label" />
+            <key name="rt_contact_button_text" />
+            <key name="rt_blog_labels" />
+            <key name="rt_author_prefix" />
+            <key name="rt_tags" />
+            <key name="rt_social" />
+            <key name="rt_blog_read_more" />
+            <key name="rt_error_heading" />
+            <key name="rt_error_text" />
+            <key name="rt_error_button_text" />
+            <key name="rt_footer_copyright" />
+            <key name="rt_post_related_title" />
+            <key name="rt_team_banner_archive_title" />
+            <key name="rt_team_banner_single_title" />
+            <key name="rt_team_slug" />
+            <key name="rt_team_cat_slug" />
+            <key name="rt_team_related_title" />
+            <key name="rt_service_banner_archive_title" />
+            <key name="rt_service_banner_single_title" />
+            <key name="rt_service_slug" />
+            <key name="rt_service_cat_slug" />
+            <key name="rt_service_related_title" />
+            <key name="rt_project_banner_archive_title" />
+            <key name="rt_project_banner_single_title" />
+            <key name="rt_project_slug" />
+            <key name="rt_project_cat_slug" />
+            <key name="rt_project_related_title" />
+        </key>
+    </admin-texts>
+	<custom-types>
+        <custom-type translate="1">rt-team</custom-type>
+        <custom-type translate="1">rt-service</custom-type>
+        <custom-type translate="1">rt-project</custom-type>
+    </custom-types>
+    <taxonomies>
+        <taxonomy translate="1">rt-team-category</taxonomy>
+        <taxonomy translate="1">rt-service-category</taxonomy>
+        <taxonomy translate="1">rt-project-category</taxonomy>
+    </taxonomies>
+	<custom-fields>
+	   <custom-field action="translate">rt_team_info_title</custom-field>
+	   <custom-field action="translate">rt_team_designation</custom-field>
+		<custom-field action="translate">rt_team_qualification</custom-field>
+		<custom-field action="translate">rt_team_age</custom-field>
+	   <custom-field action="translate">rt_team_phone</custom-field>
+	   <custom-field action="translate">rt_team_website</custom-field>
+	   <custom-field action="translate">rt_team_email</custom-field>
+	   <custom-field action="translate">rt_team_address</custom-field>
+	   <custom-field action="translate">rt_team_skill_title</custom-field>
+	   <custom-field action="translate">rt_team_skill_info</custom-field>
+	   <custom-field action="translate">skill_name</custom-field>
+	   <custom-field action="translate">skill_value</custom-field>
+	   <custom-field action="translate">rt_team_contact_form</custom-field>
+
+	   <custom-field action="translate">rt_project_title</custom-field>
+	   <custom-field action="translate">rt_project_text</custom-field>
+	   <custom-field action="translate">rt_project_client</custom-field>
+	   <custom-field action="translate">rt_project_start</custom-field>
+	   <custom-field action="translate">rt_project_end</custom-field>
+	   <custom-field action="translate">rt_project_weblink</custom-field>
+		<custom-field action="translate">rt_project_location</custom-field>
+		<custom-field action="translate">rt_project_date</custom-field>
+		<custom-field action="translate">rt_project_rating</custom-field>
+   </custom-fields>
+</wpml-config>

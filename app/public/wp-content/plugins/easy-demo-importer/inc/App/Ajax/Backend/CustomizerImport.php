@@ -1,0 +1,114 @@
+<?php
+/**
+ * Backend Ajax Class: CustomizerImport
+ *
+ * Initializes the Customizer import Process.
+ *
+ * @package SigmaDevs\EasyDemoImporter
+ * @since   1.0.0
+ */
+
+declare( strict_types=1 );
+
+namespace SigmaDevs\EasyDemoImporter\App\Ajax\Backend;
+
+use SigmaDevs\EasyDemoImporter\Common\{
+	Traits\Singleton,
+	Functions\Helpers,
+	Models\Customizer,
+	Abstracts\ImporterAjax
+};
+
+// Do not allow directly accessing this file.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'This script cannot be accessed directly.' );
+}
+
+/**
+ * Backend Ajax Class: CustomizerImport
+ *
+ * @since 1.0.0
+ */
+class CustomizerImport extends ImporterAjax {
+	/**
+	 * Singleton trait.
+	 *
+	 * @see Singleton
+	 * @since 1.0.0
+	 */
+	use Singleton;
+
+	/**
+	 * Registers the class.
+	 *
+	 * This backend class is only being instantiated in the backend
+	 * as requested in the Bootstrap class.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 *
+	 * @see Bootstrap::registerServices
+	 * @see Requester::isAdminBackend()
+	 */
+	public function register() {
+		parent::register();
+
+		add_action( 'wp_ajax_sd_edi_import_customizer', [ $this, 'response' ] );
+	}
+
+	/**
+	 * Ajax response.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public function response() {
+		// Verifying AJAX call and user role.
+		Helpers::verifyAjaxCall();
+
+		$customizerFilePath = $this->demoUploadDir( $this->demoDir() ) . '/customizer.dat';
+		$fileExists         = file_exists( $customizerFilePath );
+
+		if ( $fileExists ) {
+			/**
+			 * Action Hook: 'sd/edi/before_customizer_import'
+			 *
+			 * Performs special actions before customizer import if needed.
+			 *
+			 * @since 1.1.5
+			 */
+			do_action( 'sd/edi/before_customizer_import', $customizerFilePath ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
+			// Import customizer data.
+			ob_start();
+			( new Customizer() )->import( $customizerFilePath, $this->excludeImages );
+			ob_end_clean();
+
+			/**
+			 * Action Hook: 'sd/edi/after_customizer_import'
+			 *
+			 * Performs special actions after customizer import if needed.
+			 *
+			 * @since 1.1.5
+			 */
+			do_action( 'sd/edi/after_customizer_import', $customizerFilePath ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		}
+
+		// Response.
+		// The next-phase message must always be present: it is the client's signal
+		// to advance the pipeline. Leaving it empty when there is no customizer
+		// file halts the whole import at the result screen (with a blank title)
+		// and skips menus/settings/widgets/finalize. Only the "completed" message
+		// (third arg) is conditional on whether customizer data was imported.
+		// Friendlier text in the modal; the log keeps the neutral equivalent.
+		$this->prepareResponse(
+			'sd_edi_import_menus',
+			esc_html__( 'Working on your menus — just a sec!', 'easy-demo-importer' ),
+			$fileExists ? esc_html__( 'Customizer settings are all set!', 'easy-demo-importer' ) : esc_html__( 'No customizer settings found — skipping.', 'easy-demo-importer' ),
+			false,
+			'',
+			'',
+			$fileExists ? esc_html__( 'Customizer settings imported.', 'easy-demo-importer' ) : esc_html__( 'No customizer settings to import. Skipping.', 'easy-demo-importer' )
+		);
+	}
+}

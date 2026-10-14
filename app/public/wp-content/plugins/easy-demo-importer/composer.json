@@ -1,0 +1,72 @@
+{
+  "name": "sigmadevs/easy-demo-importer",
+  "description": "A one-click, user-friendly WordPress plugin for effortlessly importing theme demos and customizing your website in no time.",
+  "type": "wordpress-plugin",
+  "keywords": ["WordPress", "Demo Importer", "One Click", "One Click Demo Importer", "Theme Demo Importer", "WordPress Importer"],
+  "homepage": "https://github.com/wp-sigmadevs/easy-demo-importer",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "S.M. Rafiz",
+      "email": "s.m.rafiz@gmail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/wp-sigmadevs/easy-demo-importer/issues",
+    "source": "https://github.com/wp-sigmadevs/easy-demo-importer"
+  },
+  "autoload": {
+    "psr-4": {
+      "SigmaDevs\\EasyDemoImporter\\": "./inc"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SigmaDevs\\EasyDemoImporter\\Tests\\": "./tests"
+    },
+    "exclude-from-classmap": [
+      "/tests/stubs/"
+    ]
+  },
+  "scripts": {
+    "cs": "vendor/bin/phpcs --standard=phpcs.xml --report-full=error-report.txt --report-summary=error-summary.txt .",
+    "cbf": "vendor/bin/phpcbf --standard=phpcs.xml .",
+    "phpcs": "vendor/bin/phpcs --standard=phpcs.xml",
+    "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
+    "phpstan:baseline": "vendor/bin/phpstan analyse --memory-limit=2G --generate-baseline",
+    "test": "vendor/bin/phpunit",
+    "test:unit": "vendor/bin/phpunit",
+    "test:integration": "vendor/bin/phpunit --configuration phpunit-integration.xml.dist"
+  },
+  "require": {
+    "php": ">=7.4",
+    "enshrined/svg-sanitize": "^0.22.0"
+  },
+  "audit": {
+    "ignore": [
+      "PKSA-4g5g-4rkv-myqs"
+    ]
+  },
+  "config": {
+    "audit": {
+      "abandoned": "ignore",
+      "block-insecure": false
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpcsstandards/phpcsutils": "^1.0",
+    "rector/rector": "^2.3",
+    "squizlabs/php_codesniffer": "^3.13.4",
+    "wp-coding-standards/wpcs": "^3.3.0",
+    "phpstan/phpstan": "^2.1",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "phpunit/phpunit": "^9.6",
+    "brain/monkey": "^2.6",
+    "mockery/mockery": "^1.6",
+    "yoast/phpunit-polyfills": "^2.0"
+  }
+}

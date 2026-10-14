@@ -1,0 +1,2 @@
+[14-Oct-2026 06:26:06 UTC] Cron reschedule event error for hook: action_scheduler_run_queue, Error code: invalid_schedule, Error message: Event schedule does not exist., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
+[14-Oct-2026 06:26:06 UTC] Cron reschedule event error for hook: fluentform_do_scheduled_tasks, Error code: invalid_schedule, Error message: Event schedule does not exist., Data: {"schedule":"ff_every_five_minutes","args":[],"interval":300}

@@ -1,0 +1,401 @@
+<?php
+/**
+ * Backend Class: Enqueue
+ *
+ * This class enqueues required styles & scripts in the admin pages.
+ *
+ * @package SigmaDevs\EasyDemoImporter
+ * @since   1.0.0
+ */
+
+declare( strict_types=1 );
+
+namespace SigmaDevs\EasyDemoImporter\App\Backend;
+
+use SigmaDevs\EasyDemoImporter\Common\{
+	Traits\Singleton,
+	Functions\Helpers,
+	Abstracts\Enqueue as EnqueueBase
+};
+
+// Do not allow directly accessing this file.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'This script cannot be accessed directly.' );
+}
+
+/**
+ * Backend Class: Enqueue
+ *
+ * @package ThePluginName\App\Backend
+ * @since 1.0.0
+ */
+class Enqueue extends EnqueueBase {
+	/**
+	 * Singleton Trait.
+	 *
+	 * @see Singleton
+	 * @since 1.0.0
+	 */
+	use Singleton;
+
+	/**
+	 * Registers the class.
+	 *
+	 * This backend class is only being instantiated in the backend
+	 * as requested in the Bootstrap class.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 *
+	 * @see Bootstrap::registerServices
+	 * @see Requester::isAdminBackend()
+	 */
+	public function register() {
+		global $pagenow;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'themes.php' === $pagenow && ( 'sd-easy-demo-importer' === $page || 'sd-edi-demo-importer-status' === $page ) ) {
+			$this->assets();
+
+			// Bail if no assets.
+			if ( empty( $this->assets() ) ) {
+				return;
+			}
+
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
+		}
+	}
+
+	/**
+	 * Method to accumulate styles list.
+	 *
+	 * @return Enqueue
+	 * @since 1.0.0
+	 */
+	protected function getStyles() {
+		$styles = [];
+
+		$styles[] = [
+			'handle' => 'thickbox',
+		];
+
+		$styles[] = [
+			'handle'    => 'sd-edi-admin-styles',
+			'asset_uri' => esc_url( $this->plugin->assetsUri() . '/css/backend' . $this->suffix . '.css' ),
+			'version'   => $this->plugin->version(),
+		];
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$this->enqueues['style'] = apply_filters( 'sd/edi/registered_admin_styles', $styles, 10, 1 );
+
+		return $this;
+	}
+
+	/**
+	 * Method to accumulate scripts list.
+	 *
+	 * @return Enqueue
+	 * @since 1.0.0
+	 */
+	protected function getScripts() {
+		$scripts = [];
+
+		$scripts[] = [
+			'handle'     => 'sd-edi-admin-script',
+			'asset_uri'  => esc_url( $this->plugin->assetsUri() . '/js/backend.min.js' ),
+			'dependency' => [ 'jquery' ],
+			'in_footer'  => true,
+			'version'    => $this->plugin->version(),
+		];
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$this->enqueues['script'] = apply_filters( 'sd/edi/registered_admin_scripts', $scripts, 10, 1 );
+
+		return $this;
+	}
+
+	/**
+	 * Method to enqueue scripts.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public function enqueue() {
+		$this
+			->registerScripts()
+			->enqueueScripts()
+			->localize( $this->localizeData() );
+	}
+
+	/**
+	 * Localized data.
+	 *
+	 * @return array
+	 * @since 1.0.0
+	 */
+	private function localizeData() {
+		return [
+			'handle' => 'sd-edi-admin-script',
+			'object' => 'sdEdiAdminParams',
+			'data'   => [
+				// Essentials.
+				'ajaxUrl'                    => esc_url( Helpers::ajaxUrl() ),
+				'homeUrl'                    => esc_url( home_url( '/' ) ),
+				'restApiUrl'                 => esc_url_raw( rest_url() ),
+				'restNonce'                  => wp_create_nonce( 'wp_rest' ),
+				'ediLogo'                    => esc_url( $this->plugin->assetsUri() . '/images/sd-edi-logo.svg' ),
+				'numberOfDemos'              => ! empty( sd_edi()->getDemoConfig()['demoData'] ) ? count( sd_edi()->getDemoConfig()['demoData'] ) : 0,
+				'hasTabCategories'           => ! empty( sd_edi()->getDemoConfig()['demoData'] ) ? Helpers::searchArrayKey( sd_edi()->getDemoConfig(), 'category' ) : 'no',
+				Helpers::nonceId()           => wp_create_nonce( Helpers::nonceText() ),
+				'enableSupportButton'        => esc_html( apply_filters( 'sd/edi/support_button', 'yes' ) ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+				'searchPlaceholder'          => esc_html__( 'Search demos...', 'easy-demo-importer' ),
+				'searchNoResults'            => esc_html__( 'No demos found. Try a different search term.', 'easy-demo-importer' ),
+				'removeTabsAndSearch'        => esc_html( apply_filters( 'sd/edi/remove_tab_and_search', false ) ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
+				// Imports messages.
+				'prepareImporting'           => esc_html__( 'Preparing to install demo data. Doing some cleanups first.', 'easy-demo-importer' ),
+				'resetDatabase'              => esc_html__( 'Preparing to install demo data. Resetting database first.', 'easy-demo-importer' ),
+				'importSuccess'              => esc_html__( 'All done. Have fun!', 'easy-demo-importer' ),
+
+				// Modal texts.
+				'modalHeaderPrefix'          => esc_html__( 'Importing Demo:', 'easy-demo-importer' ),
+
+				// Modal Step One.
+				'beforeYouPreceed'           => esc_html__( 'Before You Proceed', 'easy-demo-importer' ),
+				'stepOneIntro1'              => self::importModalTexts()['stepOne']['introTopText'],
+				'stepOneIntro2'              => self::importModalTexts()['stepOne']['introBottomText'],
+				'stepOneIntro3'              => self::importModalTexts()['stepOne']['introExtraText'],
+				'stepTitles'                 => self::importModalTexts()['stepTitles'],
+
+				// Modal Step Two.
+				'requiredPluginsTitle'       => esc_html__( 'Required Plugins', 'easy-demo-importer' ),
+				'readinessTitle'             => esc_html__( 'Environment Readiness', 'easy-demo-importer' ),
+				'readinessIntro'             => esc_html__( 'These checks confirm your server can run the import. Resolve any blocking issue before you continue.', 'easy-demo-importer' ),
+				'readinessAdjusted'          => esc_html__( 'Adjusted', 'easy-demo-importer' ),
+				'readinessAdjustedHint'      => esc_html__( 'This plugin raised this limit for the import — your server default is unchanged.', 'easy-demo-importer' ),
+				'configureImportTitle'       => esc_html__( 'Configure Your Import', 'easy-demo-importer' ),
+				'configurePerformanceLabel'  => esc_html__( 'Performance', 'easy-demo-importer' ),
+				'configureSafetyLabel'       => esc_html__( 'Safety', 'easy-demo-importer' ),
+				'preflightTitle'             => esc_html__( 'Readiness check', 'easy-demo-importer' ),
+				'preflightBlocked'           => esc_html__( 'Resolve the failed checks below before importing.', 'easy-demo-importer' ),
+				'viewFullStatus'             => esc_html__( 'View full system status', 'easy-demo-importer' ),
+				'requiredPluginsIntro'       => self::importModalTexts()['stepTwo']['requiredPluginsIntro'],
+				'importImagesTitle'          => esc_html__( 'Import Demo Images', 'easy-demo-importer' ),
+				'importImagesHint'           => esc_html__( 'Downloads the demo images. Turn off for a faster import, or if the import fails repeatedly.', 'easy-demo-importer' ),
+				'regenerateImagesTitle'      => esc_html__( 'Regenerate Images', 'easy-demo-importer' ),
+				'regenerateImagesHint'       => esc_html__( 'Regenerates thumbnail sizes during import. Turn off for a faster import; you can regenerate later from Tools.', 'easy-demo-importer' ),
+				'resetDatabaseTitle'         => esc_html__( 'Reset Existing Database', 'easy-demo-importer' ),
+				'resetDatabaseWarning'       => esc_html__( 'Caution: ', 'easy-demo-importer' ),
+				'resetDatabaseHint'          => esc_html__( 'This will permanently erase all existing content — posts, pages, images, custom post types, taxonomies, and settings. A full database reset is recommended for the best demo import experience.', 'easy-demo-importer' ),
+
+				// Confirmation Modal.
+				'confirmationModal'          => esc_html__( 'Are you sure you want to continue?', 'easy-demo-importer' ),
+				'resetMessage'               => esc_html__( 'This will permanently delete all your existing content.', 'easy-demo-importer' ),
+				'confirmationModalWithReset' => esc_html__( 'This will permanently delete all your content, media, and settings. Are you sure you want to continue?', 'easy-demo-importer' ),
+				'confirmYes'                 => esc_html__( 'Yes', 'easy-demo-importer' ),
+				'confirmNo'                  => esc_html__( 'No', 'easy-demo-importer' ),
+
+				// Server Page Button.
+				'serverPageBtnText'          => esc_html__( 'Status & Activity', 'easy-demo-importer' ),
+				'serverPageUrl'              => sd_edi()->getData()['system_status_page'],
+				'logPageUrl'                 => sd_edi()->getData()['import_log_page'],
+				'restLogUrl'                 => esc_url_raw( rest_url( 'sd/edi/v1/import/log' ) ),
+				'logPageHeading'             => esc_html__( 'Activity', 'easy-demo-importer' ),
+				'statusTabLabel'             => esc_html__( 'System Status', 'easy-demo-importer' ),
+				'logTabLabel'                => esc_html__( 'Activity', 'easy-demo-importer' ),
+				'logRegenLabel'              => esc_html__( 'Thumbnail Regeneration', 'easy-demo-importer' ),
+				'logManualLabel'             => esc_html__( 'Manual Import', 'easy-demo-importer' ),
+				'statusLogHeading'           => esc_html__( 'System Status & Activity', 'easy-demo-importer' ),
+				'logDetailsLabel'            => esc_html__( 'Import details', 'easy-demo-importer' ),
+				'viewFullLog'                => esc_html__( 'View full log', 'easy-demo-importer' ),
+				'retryFailedNotice'          => esc_html__( 'media file(s) could not be downloaded.', 'easy-demo-importer' ),
+				'retryButton'                => esc_html__( 'Retry failed images', 'easy-demo-importer' ),
+				'retryFinished'              => esc_html__( 'Media retry finished', 'easy-demo-importer' ),
+				'retryRecovered'             => esc_html__( 'recovered', 'easy-demo-importer' ),
+				'retryStillFailed'           => esc_html__( 'still failed', 'easy-demo-importer' ),
+				'snapshotTitle'              => esc_html__( 'Create a restore point', 'easy-demo-importer' ),
+				'snapshotHint'               => esc_html__( 'Back up your content before importing so this import can be rolled back. Uses extra database storage until you discard it. Restoring reverts the site to this moment — anything added after is lost.', 'easy-demo-importer' ),
+				'snapshotDetails'            => esc_html__( 'Backs up your site before importing, so one click restores this exact state. Anything added after the import is lost.', 'easy-demo-importer' ),
+				'snapshotStorageLabel'       => esc_html__( 'Storage: ', 'easy-demo-importer' ),
+				'snapshotStorageNotice'      => esc_html__( 'your database roughly doubles in size until the restore point is discarded. Media files are recorded, not copied.', 'easy-demo-importer' ),
+				'rollbackBannerTitle'        => esc_html__( 'A restore point from your last import is available.', 'easy-demo-importer' ),
+				'rollbackBannerDesc'         => esc_html__( 'You can roll your site back to the state it was in before that import. Rolling back also removes anything created since.', 'easy-demo-importer' ),
+				'manualImportButton'         => esc_html__( 'Manual Import', 'easy-demo-importer' ),
+				'manualImportHint'           => esc_html__( 'Have your own export? Import it manually.', 'easy-demo-importer' ),
+				'manualModalHeaderPrefix'    => esc_html__( 'Manual Import', 'easy-demo-importer' ),
+				'manualFilesLabel'           => esc_html__( 'Files', 'easy-demo-importer' ),
+				'manualStepUpload'           => esc_html__( 'Upload', 'easy-demo-importer' ),
+				'manualStepImport'           => esc_html__( 'Import', 'easy-demo-importer' ),
+				'manualStepEnd'              => esc_html__( 'End', 'easy-demo-importer' ),
+				'manualModeSeparate'         => esc_html__( 'Separate files', 'easy-demo-importer' ),
+				'manualModeBundle'           => esc_html__( 'Single bundle (.zip)', 'easy-demo-importer' ),
+				'manualImportImagesHint'     => esc_html__( 'Downloads images referenced by the export. Automatically skipped when you provide an images .zip.', 'easy-demo-importer' ),
+				'manualNoBundle'             => esc_html__( 'Please choose a bundle .zip file.', 'easy-demo-importer' ),
+				'manualTitle'                => esc_html__( 'Manual Import', 'easy-demo-importer' ),
+				'manualWarning'              => esc_html__( 'This imports into your current site. Turn the restore point on so you can roll back.', 'easy-demo-importer' ),
+				'manualUploading'            => esc_html__( 'Uploading', 'easy-demo-importer' ),
+				'manualNoContent'            => esc_html__( 'Please choose a content (WXR/XML) file.', 'easy-demo-importer' ),
+				'manualSlotContentTitle'     => esc_html__( 'Content', 'easy-demo-importer' ),
+				'manualSlotContentHint'      => esc_html__( 'WXR / XML export', 'easy-demo-importer' ),
+				'manualSlotCustomizerTitle'  => esc_html__( 'Customizer', 'easy-demo-importer' ),
+				'manualSlotCustomizerHint'   => esc_html__( '.dat file', 'easy-demo-importer' ),
+				'manualSlotWidgetsTitle'     => esc_html__( 'Widgets', 'easy-demo-importer' ),
+				'manualSlotWidgetsHint'      => esc_html__( '.wie or .json', 'easy-demo-importer' ),
+				'manualSlotSettingsTitle'    => esc_html__( 'Settings', 'easy-demo-importer' ),
+				'manualSlotSettingsHint'     => esc_html__( '.json, or .zip of JSONs', 'easy-demo-importer' ),
+				'manualSlotImagesTitle'      => esc_html__( 'Images', 'easy-demo-importer' ),
+				'manualSlotImagesHint'       => esc_html__( '.zip of the uploads folder', 'easy-demo-importer' ),
+				'manualBundleDropTitle'      => esc_html__( 'Drop your bundle .zip here', 'easy-demo-importer' ),
+				'manualBundleDropHint'       => esc_html__( 'One .zip containing content, customizer, widgets, settings and images', 'easy-demo-importer' ),
+				'manualDropHint'             => esc_html__( 'Drop a file or click to browse', 'easy-demo-importer' ),
+				'manualRequired'             => esc_html__( 'Required', 'easy-demo-importer' ),
+				'manualOptional'             => esc_html__( 'Optional', 'easy-demo-importer' ),
+				'rollbackButton'             => esc_html__( 'Roll Back', 'easy-demo-importer' ),
+				'rollbackTitle'              => esc_html__( 'Roll back this import?', 'easy-demo-importer' ),
+				'rollbackWarning'            => esc_html__( 'This restores your site to the moment before this import. Anything created since (new posts, orders, users) will be permanently lost.', 'easy-demo-importer' ),
+				'rollbackConfirm'            => esc_html__( 'Roll back', 'easy-demo-importer' ),
+				'restorePointKeepNotice'     => esc_html__( 'A restore point is holding a backup of your previous site, which uses disk space. Keep it to stay able to roll back, or discard it now to free the space.', 'easy-demo-importer' ),
+				'discardButton'              => esc_html__( 'Discard Backup', 'easy-demo-importer' ),
+				'discardConfirmTitle'        => esc_html__( 'Discard the restore point?', 'easy-demo-importer' ),
+				'discardConfirmText'         => esc_html__( 'This frees the disk space used by the backup. You will no longer be able to roll this import back.', 'easy-demo-importer' ),
+				'discardConfirm'             => esc_html__( 'Discard', 'easy-demo-importer' ),
+				'discardDone'                => esc_html__( 'Restore point discarded — disk space reclaimed.', 'easy-demo-importer' ),
+				'logSuccess'                 => esc_html__( 'Success', 'easy-demo-importer' ),
+				'logWarning'                 => esc_html__( 'Completed with warnings', 'easy-demo-importer' ),
+				'logFailed'                  => esc_html__( 'Failed', 'easy-demo-importer' ),
+				'logInProgress'              => esc_html__( 'In progress', 'easy-demo-importer' ),
+				'logInterrupted'             => esc_html__( 'Interrupted', 'easy-demo-importer' ),
+				'logDurationLabel'           => esc_html__( 'Import duration', 'easy-demo-importer' ),
+				'logShareLabel'              => esc_html__( 'Share', 'easy-demo-importer' ),
+				'logExportAll'               => esc_html__( 'Export all', 'easy-demo-importer' ),
+				'logShareCopy'               => esc_html__( 'Copy to clipboard', 'easy-demo-importer' ),
+				'logShareDownload'           => esc_html__( 'Download .txt', 'easy-demo-importer' ),
+				'logShareCopied'             => esc_html__( 'Import log copied to clipboard.', 'easy-demo-importer' ),
+				'logShareCopyFailed'         => esc_html__( 'Could not copy — use Download instead.', 'easy-demo-importer' ),
+				'logShareTitle'              => esc_html__( 'Easy Demo Importer — Import Log', 'easy-demo-importer' ),
+				'logShareRunsHeading'        => esc_html__( 'Import Runs', 'easy-demo-importer' ),
+				'logShareStarted'            => esc_html__( 'Started', 'easy-demo-importer' ),
+				'logShareFinished'           => esc_html__( 'Finished', 'easy-demo-importer' ),
+				'logShareEntries'            => esc_html__( 'Entries', 'easy-demo-importer' ),
+				'logGroupRepeated'           => esc_html__( 'similar entries', 'easy-demo-importer' ),
+				'logGroupShowAll'            => esc_html__( 'Show all', 'easy-demo-importer' ),
+				'logGroupHide'               => esc_html__( 'Hide', 'easy-demo-importer' ),
+				'logUnknownDemo'             => esc_html__( 'Import', 'easy-demo-importer' ),
+				'logEmpty'                   => esc_html__( 'No import activity has been logged yet.', 'easy-demo-importer' ),
+				'importPageBtnText'          => esc_html__( 'Back to Demo Importer', 'easy-demo-importer' ),
+				'importPageUrl'              => admin_url( 'themes.php?page=sd-easy-demo-importer#/' ),
+				'importPageLink'             => 'themes.php?page=sd-easy-demo-importer',
+
+				// Regenerate Thumbnails page.
+				'regenAction'                => 'sd_edi_regen_thumbnails',
+				'regenNonce'                 => wp_create_nonce( 'sd_edi_regen_thumbnails' ),
+				'regenPageUrl'               => sd_edi()->getData()['regen_thumbs_page'],
+				'regenHeading'               => esc_html__( 'Regenerate Thumbnails', 'easy-demo-importer' ),
+				'regenIntro'                 => esc_html__( 'Rebuilds the intermediate image sizes across your whole media library. It runs in small, resumable batches, so it will not time out even on very large libraries.', 'easy-demo-importer' ),
+				'regenImagesFound'           => esc_html__( 'images in your media library', 'easy-demo-importer' ),
+				'regenForceLabel'            => esc_html__( 'Force-regenerate every size', 'easy-demo-importer' ),
+				'regenForceHint'             => esc_html__( 'Slower — use only when a registered image size changed dimensions. Otherwise only the missing sizes are created.', 'easy-demo-importer' ),
+				'regenSingleLabel'           => esc_html__( 'Process one at a time', 'easy-demo-importer' ),
+				'regenSingleHint'            => esc_html__( 'Regenerates a single image per request instead of in fast batches. Slower on large libraries, but updates strictly one-by-one.', 'easy-demo-importer' ),
+				'regenListTitle'             => esc_html__( 'Regeneration log', 'easy-demo-importer' ),
+				'regenListOverflow'          => esc_html__( 'Showing the most recent images', 'easy-demo-importer' ),
+				'regenStartBtn'              => esc_html__( 'Regenerate Thumbnails', 'easy-demo-importer' ),
+				'regenRunningBtn'            => esc_html__( 'Regenerating…', 'easy-demo-importer' ),
+				'regenDoneBtn'               => esc_html__( 'Regenerate Again', 'easy-demo-importer' ),
+				'regenRunning'               => esc_html__( 'Regenerating your images…', 'easy-demo-importer' ),
+				'regenComplete'              => esc_html__( 'All done! Your thumbnails have been regenerated.', 'easy-demo-importer' ),
+				'regenError'                 => esc_html__( 'Something went wrong. Please refresh the page and try again.', 'easy-demo-importer' ),
+				'regenEmpty'                 => esc_html__( 'No images found in your media library.', 'easy-demo-importer' ),
+				'regenStatProcessed'         => esc_html__( 'Processed', 'easy-demo-importer' ),
+				'regenStatRegenerated'       => esc_html__( 'Regenerated', 'easy-demo-importer' ),
+				'regenStatSkipped'           => esc_html__( 'Skipped', 'easy-demo-importer' ),
+				'regenStatFailed'            => esc_html__( 'Failed', 'easy-demo-importer' ),
+
+				// Button texts.
+				'btnLivePreview'             => esc_html__( 'Live Preview', 'easy-demo-importer' ),
+				'btnImport'                  => esc_html__( 'Import', 'easy-demo-importer' ),
+				'btnCancel'                  => esc_html__( 'Cancel', 'easy-demo-importer' ),
+				'btnContinue'                => esc_html__( 'Continue', 'easy-demo-importer' ),
+				'btnPrevious'                => esc_html__( 'Previous', 'easy-demo-importer' ),
+				'btnStartImport'             => esc_html__( 'Start Import', 'easy-demo-importer' ),
+				'btnViewSite'                => esc_html__( 'View Site', 'easy-demo-importer' ),
+				'btnClose'                   => esc_html__( 'Close', 'easy-demo-importer' ),
+				'btnMore'                    => esc_html__( 'More…', 'easy-demo-importer' ),
+				'btnReloadRetry'             => esc_html__( 'Reload & Retry', 'easy-demo-importer' ),
+				'btnResume'                  => esc_html__( 'Resume Import', 'easy-demo-importer' ),
+				'btnStartOver'               => esc_html__( 'Start Over', 'easy-demo-importer' ),
+				'resumingImport'             => esc_html__( 'Resuming import from where it left off...', 'easy-demo-importer' ),
+				'importInterruptedTitle'     => esc_html__( 'Import was interrupted.', 'easy-demo-importer' ),
+				'importInterruptedHint'      => esc_html__( 'Your previous import did not complete. Resume from where it left off, or start over to begin fresh.', 'easy-demo-importer' ),
+				'importWaitingMessage'       => esc_html__( 'Waiting for another import to finish', 'easy-demo-importer' ),
+				'importBusyTitle'            => esc_html__( 'Another import is still running.', 'easy-demo-importer' ),
+				'importBusyHint'             => esc_html__( 'It has held the import lock longer than expected and may have stalled. Resume to keep waiting, or Start Over to begin fresh.', 'easy-demo-importer' ),
+				'clickEnlarge'               => esc_html__( 'Click to Enlarge', 'easy-demo-importer' ),
+				'requirementsNotMet'         => esc_html__( 'This demo needs:', 'easy-demo-importer' ),
+				'requirementsNotMetHint'     => esc_html__( 'Import is unavailable until these are met.', 'easy-demo-importer' ),
+				'createATicket'              => esc_html__( 'Contact Us', 'easy-demo-importer' ),
+				'viewDocumentation'          => esc_html__( 'View Documentation', 'easy-demo-importer' ),
+				'needHelp'                   => esc_html__( 'Need help?', 'easy-demo-importer' ),
+				'onlineDoc'                  => esc_html__( 'Documentation & FAQ', 'easy-demo-importer' ),
+				'allDemoBtnText'             => esc_html__( 'All Demos', 'easy-demo-importer' ),
+
+				// Support Modal.
+				'supportTitle'               => esc_html__( 'Need Help?', 'easy-demo-importer' ),
+				'docTitle'                   => esc_html__( 'Documentation & FAQs', 'easy-demo-importer' ),
+				'supportDesc'                => self::importModalTexts()['supportText'],
+				'docDesc'                    => self::importModalTexts()['docText'],
+				'docUrl'                     => self::importModalTexts()['docUrl'],
+				'ticketUrl'                  => self::importModalTexts()['ticketUrl'],
+				'copySuccess'                => esc_html__( 'System status data copied to clipboard.', 'easy-demo-importer' ),
+				'copyFailure'                => esc_html__( 'Could not copy to clipboard. Please try again.', 'easy-demo-importer' ),
+
+				// Server Requirements.
+				'reqHeader'                  => esc_html__( 'Server Requirements Not Met', 'easy-demo-importer' ),
+				'reqDescription'             => esc_html__( 'Your server does not meet the minimum requirements for demo import. Please review the Status & Logs page for details. Proceeding without meeting these requirements may result in a failed or incomplete import.', 'easy-demo-importer' ),
+				'reqProceed'                 => esc_html__( 'Continue Anyway', 'easy-demo-importer' ),
+
+				// Plugin Status.
+				'notInstalled'               => esc_html__( 'Not installed', 'easy-demo-importer' ),
+				'installedAndActive'         => esc_html__( 'Installed and active', 'easy-demo-importer' ),
+				'installedNotActive'         => esc_html__( 'Installed but not active', 'easy-demo-importer' ),
+				'installedNeedUpdate'        => esc_html__( 'Installed & active — update available', 'easy-demo-importer' ),
+				'inactiveNeedUpdate'         => esc_html__( 'Installed but inactive — update available', 'easy-demo-importer' ),
+			],
+		];
+	}
+
+	/**
+	 * Import modal texts.
+	 *
+	 * @return array
+	 * @since 1.0.0
+	 */
+	public static function importModalTexts() {
+		return apply_filters(
+			'sd/edi/import_modal_texts', // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			[
+				'stepOne'     => [
+					'introTopText'    => esc_html__( 'We recommend creating a restore point before you proceed — enable it on the next step to roll your site back if anything goes wrong. A separate backup plugin can add an extra layer of safety.', 'easy-demo-importer' ),
+					'introBottomText' => esc_html__( 'This import installs the required plugins and brings in content, media, settings, customizer data, and widgets needed to replicate the demo site. On the next step you can choose what to import and whether to reset your existing database first. Please review your existing content, as some data may be overwritten.', 'easy-demo-importer' ),
+					'introExtraText'  => '',
+				],
+				'stepTwo'     => [
+					'requiredPluginsIntro' => esc_html__( 'To replicate the demo site, the following plugins will be automatically installed and activated if not already present. Scroll down to see the full list.', 'easy-demo-importer' ),
+				],
+				'supportText' => esc_html__( 'Having trouble? Reach out to us and we\'ll help you get sorted quickly.', 'easy-demo-importer' ),
+				'docText'     => esc_html__( 'Explore our documentation for step-by-step guides, helpful screenshots, and FAQs to walk you through the demo import process.', 'easy-demo-importer' ),
+				'docUrl'      => 'https://docs.sigmadevs.com/easy-demo-importer/',
+				'ticketUrl'   => 'https://docs.sigmadevs.com/easy-demo-importer/contact-us/',
+				'stepTitles'  => [
+					'step1' => esc_html__( 'Start', 'easy-demo-importer' ),
+					'step2' => esc_html__( 'Readiness', 'easy-demo-importer' ),
+					'step3' => esc_html__( 'Configure', 'easy-demo-importer' ),
+					'step4' => esc_html__( 'Imports', 'easy-demo-importer' ),
+					'step5' => esc_html__( 'End', 'easy-demo-importer' ),
+				],
+			]
+		);
+	}
+}

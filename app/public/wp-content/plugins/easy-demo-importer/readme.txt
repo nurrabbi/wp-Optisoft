@@ -1,0 +1,283 @@
+=== Easy Demo Importer - A Modern One-Click Demo Import Solution ===
+Contributors: sigmadevs
+Donate link:
+Tags: demo importer, one click demo importer, theme demo importer, WordPress demo importer, content import plugin
+Requires at least: 5.5
+Tested up to: 7.0
+Stable tag: 2.0.2
+Requires PHP: 7.4
+License: GPLv3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+GitHub Repository: https://github.com/wp-sigmadevs/easy-demo-importer
+
+A one-click, user-friendly WordPress plugin for effortlessly importing theme demos and customizing your website in no time.
+
+== Description ==
+
+Are you tired of the complex and time-consuming process of setting up your WordPress website? Look no further. The Easy Demo Importer plugin is your solution to effortlessly import demo data and have your website up and running in no time.
+
+👉 [Official GitHub Repository](https://github.com/wp-sigmadevs/easy-demo-importer) | [Plugin Documentation](https://docs.sigmadevs.com/easy-demo-importer). 👈
+
+> **Notes for users:** Please note that this plugin isn't a ready-to-use solution out of the box. The demo data import feature needs to be set up and configured by the theme authors. If you run into any difficulties or need help, please contact the theme author for assistance with the setup and integration. You can find a step-by-step guide on how to import demo data properly in the [User Documentation](https://docs.sigmadevs.com/easy-demo-importer/user-docs/).
+>
+> **Notes for theme authors:** If you encounter any issues or need assistance with integrating the demo importer into your theme, don't hesitate to seek support. You can either post your queries in the support forum or use the [plugin documentation contact page](https://docs.sigmadevs.com/easy-demo-importer/contact-us/). A detailed theme integration guide is available in the [Developer Documentation](https://docs.sigmadevs.com/easy-demo-importer/developer-docs/).
+
+== Key Features ==
+
+* **One-Click Demo Import:** With just one click, you can import beautifully designed demo content to kickstart your website.
+* **Based on WordPress XML Importer:** Built on the reliable WordPress XML Importer, our plugin ensures a robust import process.
+* **Full Site or Single Site Import:** Demo importer can be configured to import a whole demo or individual demos from a multipurpose theme.
+* **Complete Content Import:** Imports all contents and Customizer settings, including widgets, menus, options data, Redux Framework data, Slider Revolution slides, and more, ensuring your website mirrors the demo in both appearance and functionality.
+* **Resumable, Timeout-Proof Import:** Large and WooCommerce demos import in time-boxed batches that survive gateway timeouts and auto-resume if interrupted.
+* **Manual Import:** Upload your own content, media, and settings — as separate files or a single .zip bundle — without a theme configuration.
+* **One-Click Rollback:** Create a restore point before importing and revert your site with a single click.
+* **Status & Activity Page:** A single tabbed page pairing a live, per-item log of every import and thumbnail run with a system status checklist that flags server issues before you start.
+* **Regenerate Thumbnails:** A built-in, resumable thumbnail regenerator with force-all-sizes and one-at-a-time modes.
+* **WP-CLI Support:** Manage imports from the command line — `wp edi demos`, `wp edi regenerate` and `wp edi rollback`.
+* **Security-Hardened Import:** Imported SVGs are sanitized against stored XSS, and every remote download is checked against SSRF on each redirect hop.
+* **User-Friendly Interface:** Our intuitive interface makes it easy for users of all skill levels to import demo data.
+* **Universal Theme Compatibility:** Can be configured to work seamlessly with a wide range of WordPress themes, ensuring broad compatibility.
+* **Developer Hooks:** offers a wide range of hooks that give theme developers full control to perform advanced custom actions. These hooks allow for precise adjustments and customizations in the import process.
+* **Database Reset Option Included:** Theme users can decide whether to reset the database during import. It provides a clean slate for a fresh start.
+* **Media Import Control for Speed:** Our plugin offers flexibility by letting users choose whether to include media during demo imports. Disabling media import can speed up the setup for those who don't need media files.
+* **Plugin Settings and Theme Options:** Can be configured to import any plugin settings and theme options, ensuring a cohesive website setup.
+* **Tabbed Categories & Search feature:** Includes a convenient tabbed interface that categorizes demos into various categories with a powerful search feature.
+* **Fluent Forms Import:** Can be configured to automatically import Fluent Forms, retaining your forms' integrity.
+* **Slider Revolution & LayerSlider Import:** Can be configured to automatically import Slider Revolution and LayerSlider slides, ensuring the slides' functionalities.
+* **Modern React-Powered Pages:** Enjoy modern, React-powered admin pages for a seamless user experience.
+* **Built-in Required Plugins Installer:** Features a built-in Required Plugins Installer that can be configured for hassle-free import process.
+* **Automatic URL and Commenter Email Replacement:** Designed for developers, our plugin has a versatile built-in tool for updating URLs and email addresses in your imported content.
+* **Elementor Taxonomy Data Fix:** Resolve Elementor widgets data import issues with our automatic taxonomy data fix.
+
+Experience the ultimate convenience of importing demo data with the Easy Demo Importer plugin. Make your website set up a breeze and unleash the full potential of your WordPress theme. Whether you're a user or developer, our feature-rich and user-friendly plugin is designed to simplify your website creation journey.
+
+> **Important Note:** Please be aware that this plugin does not provide a feature to import authors from the demo import file in your WordPress site. When you import demo content, all content will be attributed to the current user account.
+
+For any bugs or suggestions, please email us at: service.sigmadevs@gmail.com
+
+= Requirements =
+* **WordPress version:** >= 5.5
+* **PHP version:** >= 7.4
+
+== Installation ==
+
+= Using The WordPress Dashboard =
+
+1. Navigate to the 'Add New' in the plugins dashboard
+2. Search for 'Easy Demo Importer'
+3. Click 'Install Now'
+4. Activate the plugin on the Plugin dashboard
+
+= Uploading in WordPress Dashboard =
+
+1. Navigate to the 'Add New' in the plugins dashboard
+2. Navigate to the 'Upload' area
+3. Select `easy-demo-importer.zip` from your computer
+4. Click 'Install Now'
+5. Activate the plugin in the Plugin dashboard
+
+= Using FTP =
+
+1. Download `easy-demo-importer.zip`
+2. Extract the `easy-demo-importer` directory to your computer
+3. Upload the `easy-demo-importer` directory to the `/wp-content/plugins/` directory
+4. Activate the plugin in the Plugin dashboard
+
+== Frequently Asked Questions ==
+
+= How to configure demo import? =
+
+Theme authors can can set up demo imports easily by using the `sd/edi/importer/config` filter. A sample configuration can be found in the "samples" folder within the plugin directory.
+
+Please note that three mandatory files need to be exported from the theme demo: **XML File, Customizer File, and Widget File**. The XML file (.xml) needs to be renamed as `content.xml`, the Customizer file (.dat) as `customizer.dat`, and the widget file (.wie) as `widget.wie`, after that these files will be automatically recognized by the demo importer.
+
+For step-by-step instructions on integrating your theme with the Easy Demo Importer, please check out the **[Developer Docs](https://docs.sigmadevs.com/easy-demo-importer/developer-docs/)** in the Easy Demo Importer Documentation.
+
+= How can I see the demo importer in action? =
+
+A sample configuration is provided in the *plugin directory -> samples* folder. It is configured to work with the default **Twenty Twenty-One** theme.
+
+To see the importer in action, simply require the `sample-config.php` file within your theme's `functions.php`. It will even work in the localhost.
+
+The link of a **sample .zip file** is provided in the plugin documentation. Kindly look for it in the information note of the **[Configuring the Demo Import with PHP](https://docs.sigmadevs.com/easy-demo-importer/php-configuration/#sd-toc-configuring-the-demo-import-with-php)** section.
+
+= Where is the demo import page? =
+
+If your theme is correctly configured, you can find the demo import page with all the demos in *Dashboard -> Appearance -> Easy Demo Importer*.
+
+= How can I export any required plugin settings to include in the demo import? =
+
+Please refer to the **[Exporting Settings as JSON](https://docs.sigmadevs.com/easy-demo-importer/theme-integration/#sd-toc-exporting-settings-as-json)** section in the Easy Demo Importer plugin documentation for detailed instructions on exporting various settings as JSON files.
+
+= I can't import the demo. It is saying there are errors. What can I do? =
+
+Commonly, errors encountered during the demo import process are often associated with the relatively smaller `max_execution_time` or server timeout settings. A practical first step is to inspect the built-in **Appearance -> Easy System Status** page, which can provide insights into any problematic server parameters. Once these issues are fixed, your demo import should work smoothly.
+
+For a comprehensive guide on debugging import issues, please refer to the **[Troubleshooting](https://docs.sigmadevs.com/easy-demo-importer/troubleshooting/)** within the Easy Demo Importer plugin documentation. This page provides detailed steps to troubleshoot and resolve common import-related issues.
+
+= Does this plugin support multi-language? =
+
+Certainly, Easy Demo Importer fully supports multi-language functionality.
+
+= Does this plugin support RTL? =
+
+Absolutely! Easy Demo Importer provides full support for RTL languages.
+
+= Where can I report bugs or contribute to the project? =
+
+Bugs can be reported either in our support forum or preferably on the [GitHub repository](https://github.com/wp-sigmadevs/easy-demo-importer/issues), also on the [contact page](https://docs.sigmadevs.com/easy-demo-importer/contact-us/).
+
+= Need Any Help? =
+
+For any inquiries, bug reports, or suggestions, please submit your request [here](https://docs.sigmadevs.com/easy-demo-importer/contact-us/).
+
+== Screenshots ==
+
+1. Example of multiple demos that a user can choose from.
+2. Example of how import step introduction popup looks.
+3. Example of how required plugins and configure import popup looks.
+4. Example of how the demo import step popup looks.
+5. Example of the completed demo import popup.
+6. Example of how the system status page looks.
+
+== Changelog ==
+
+= 2.0.2 (27-July-2026) =
+* Feature: Live progress bar for the demo-archive download.
+* Feature: Share or export any import-log run (copy or download .txt), plus a run-duration badge and a collapsed "Skipped N media items" summary.
+* Feature: Preflight auto-tuner raises PHP time/memory limits where allowed and flags plugin-adjusted limits.
+* Feature: Demos with missing required plugins are greyed out; caching plugins are flushed after import.
+* Security: Both remote-download paths (demo archive and plugin installer) are hardened against SSRF, re-validating every redirect hop.
+* Fix: Large archives stream to disk instead of buffering in memory, avoiding out-of-memory crashes.
+* Fix: Preflight no longer errors when set_time_limit/ini_set are disabled.
+* Fix: The server-requirements warning stays dismissed, and failed-term log lines group correctly.
+* Fix: A content import that loses its saved progress mid-run now reports an error and stops instead of falsely claiming completion.
+* Fix: The Activity log lists your recent import runs instead of only the latest one.
+* Fix: Uninstalling removes leftover restore-point shadow tables instead of orphaning them in the database.
+* Fix: Error notices sent as plain text no longer render as an empty box.
+* Fix: The Configure step and the Manual Import dialog no longer scroll on a standard screen.
+* Performance: The demo picker no longer re-renders every card on each search keystroke.
+* Tweak: Restore point now defaults off; download timeout raised to 300s and reported honestly.
+* Tweak: Shortened the restore-point description and removed the raw entry count from the import log's run header.
+
+= 2.0.1 (19-July-2026) =
+* Security: Imported SVG files are now sanitized during demo import to prevent stored XSS.
+* Feature: Fatal errors (HTTP 500) and gateway/edge failures (523/520/502, dropped connections) are recorded in the activity log with the real status, instead of the log stopping at the last successful step.
+* Fix: Slider Revolution 6+ demos import correctly against the updated API, and RevSlider filenames are normalized so the extractor can locate them.
+* Fix: LayerSlider and other slider imports report their true result instead of falsely claiming success when the slider plugin is inactive.
+* Fix: The import only runs the Fluent Forms step when Fluent Forms is active.
+* Performance: Elementor data is loaded in batches to bound memory on large demos, and taxonomy term-ID lookups are cached to avoid N+1 queries.
+* Tweak: With image import turned off, the log shows a single "Skipped N media items" summary instead of one line per file.
+* Tweak: Manual imports read as "your uploaded files" in the log instead of the internal slug.
+* Tweak: Updated the wizard's "Before You Proceed" copy for the restore point and configurable import.
+
+= 2.0.0 (18-July-2026) =
+* Feature: Resumable, chunked WXR import — large/WooCommerce demos no longer fail with 524/503 gateway timeouts.
+* Feature: Manual import — upload your own content, media, and settings as separate files or a single .zip bundle.
+* Feature: One-click rollback — a restore point is created before import so you can revert in one click.
+* Feature: Activity log — every import and thumbnail run is recorded with a live, per-item log.
+* Feature: Regenerate Thumbnails tool (Appearance → Easy Thumbnails) — resumable, with force-all-sizes and one-at-a-time modes.
+* Feature: Determinate progress bar that auto-resumes after connection drops or gateway timeouts.
+* Feature: Interrupted imports resurface on reload with a Resume / Start Over prompt.
+* Feature: LayerSlider import support.
+* Feature: WP-CLI support — `wp edi demos`, `regenerate`, and `rollback`.
+* Feature: Pre-import readiness checks gate Start Import until the server is ready.
+* Feature: Retry individual failed media downloads from the result screen.
+* Feature: Bundled media import — demo images load from the package instead of downloading.
+* Add: Full compatibility with WordPress 7.0.
+* Security: Completed the fix for the SVG-upload Stored XSS (CVE-2024-9071), closing an Author-role restriction bypass still exploitable through 1.1.6. Reported by Artus KG.
+* Security: Hardened archive extraction (ZipSlip), plugin-installer downloads, and PHP file loading.
+* Fix: Elementor global settings (container width, colors, fonts) are applied correctly after import.
+* Fix: Improved Fluent Forms import, settings validation, demo-file download verification, and AJAX input sanitization.
+* Fix: Prevented a JavaScript crash when network requests fail or time out.
+* Fix: Resolved empty navigation menus by reconciling item counts and auto-creating missing menus.
+* Fix: Isolated import responses to prevent silent failures caused by third-party plugin output.
+* Fix: Ensured extracted demo files are automatically removed after a successful import.
+* Fix: Boosted memory limits and resource allocation during the finalization stage.
+* Performance: Batched attachment-URL updates and checkpointed progress for faster media handling.
+* Tweak: Improved Customizer, Widgets, and database search-replace handling; refactored slider import.
+* Tweak: A readiness step shows the "View full system status" link inline; improved uninstall cleanup.
+* Tweak: Recorded per-item import notices in the activity log with accurate severity levels.
+
+= 1.1.6 (28-February-2026) =
+* Add: Full compatibility with WordPress 6.9.
+* Add: Option to skip image regeneration during import to speed up the process.
+* Add: Smart scroll indicators on the demo preview image in the import modal.
+* Fix: PHP 8.4 compatibility improvements for script loading.
+* Fix: Prevented fatal errors when cleaning upload directories that cannot be read.
+* Fix: Added empty check on demo data config to prevent warnings when demoData is absent.
+* Tweak: Improved wording of some user-facing messages.
+* Update: Updated enshrined/svg-sanitize dependency.
+
+= 1.1.5 (22-July-2025) =
+* Add: Full compatibility with WordPress 6.8.
+* Add: Nav menu item custom meta-data is now preserved during import.
+* Add: Importer now supports non-unique post-types (e.g., grouped fields).
+* Fix: PHP 8.4 compatibility improvements for the XML parser.
+* Fix: Resolved CSS issues across various admin views.
+* Fix: Corrected Elementor taxonomy mapping issues in default WordPress widgets.
+* Fix: Fixed a typo in the system status report.
+* Dev: Introduced new action hooks for advanced developer customization.
+* Tweak: Temporarily disable big image scaling during the import process.
+* Tweak: Enhanced CSS transitions for smoother visual behavior.
+* Tweak: Refactored post-processing logic in the importer.
+* Update: Upgraded the core Import library to the latest stable version.
+* Update: Updated all dependency libraries to their latest versions.
+* Update: UI enhancements to align with updated external libraries and frameworks.
+
+= 1.1.4 (16-November-2024) =
+* Add: Full compatibility with WordPress 6.7.
+* Fix: Resolved the PHP "Uncaught TypeError" error in SVG detection.
+* Performance: Removed the download server connection check to reduce REST API calls.
+* Enhancement: Introduced a way to set the Posts page (blog) as the front page.
+
+= 1.1.3 (03-October-2024) =
+* Add: SVG file sanitization to prevent malicious content uploads.
+* Add: File size validation for SVG uploads, with customizable size limits.
+* Fix: Correct MIME type detection for SVG files in WordPress.
+* Fix: Resolved issue where unsafe SVG files bypassed security checks.
+* Tweak: Improved error messaging for file upload validation.
+
+= 1.1.2 (11-August-2024) =
+* Add: Full compatibility with WordPress 6.6.
+* Add: Integrated React Router for smoother and faster page transitions.
+* Fix: Resolved an issue where HTML entities were incorrectly displayed.
+* Fix: Addressed UI issues on the Server Status page.
+* Tweak: Enhanced the database reset script.
+* Update: Updated dependency libraries to their latest versions.
+* Update: UI adjustments to align with the updated versions of the libraries.
+
+= 1.1.1 (21-April-2024) =
+* Add: Included Support for RTL language.
+* Add: Compatibility with WordPress 6.5 and PHP 8.3.
+* Add: Implemented temporary PHP parameters boost during import.
+* Fix: Addressed some sanitization issues.
+* Fix: Rectified a PHP warning regarding undefined index.
+* Fix: Resolved several responsive issues.
+* Fix: Corrected various CSS issues.
+* Tweak: Made improvements to the codebase.
+* Update: Added/renamed various action and filter hooks.
+
+= 1.1.0 (20-February-2024) =
+* Feature: Added support for importing Slider Revolution Slides.
+* Feature: Introduced tabbed categories in the demo import interface.
+* Feature: Implemented a search functionality for quicker access to specific demos.
+* Add: Included step titles in the demo import process.
+* Add: Enhanced the import modal intro step with an additional paragraph.
+* Fix: Addressed import modal compatibility issues with high-resolution devices.
+* Fix: Resolved Elementor taxonomy data mapping issues for repeater controls.
+* Fix: Improved functionality of the required plugin update feature.
+* Tweak: Conducted code refactoring to optimize performance and maintainability.
+* Update: Added/renamed various action and filter hooks for enhanced customization.
+* Update: Included 'PHP Max Input Time' parameter in the System Status Screen for better diagnostics.
+
+= 1.0.2 (10-December-2023) =
+* Feature: Added a feature to update required plugins if available.
+* Fix: Resolved an issue with importing product attributes.
+* Update: Elementor taxonomy data mapping for improved compatibility with multiple and repeater controls.
+
+= 1.0.1 (26-November-2023) =
+* Fix: Resolved compatibility issues with PHP 7.4.
+
+= 1.0.0 =
+* Initial release
